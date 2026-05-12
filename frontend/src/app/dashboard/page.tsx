@@ -3,7 +3,7 @@ import { useEffect, useState, useRef, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/AuthContext';
 import api from '@/lib/api';
-import { LogOut, Wallet, Send, PlusCircle, History, X, Search, User, Check, Edit3 } from 'lucide-react';
+import { LogOut, Wallet, Send, PlusCircle, History, X, Search, User, Check, Edit3, MousePointer2 } from 'lucide-react';
 
 interface Transaction {
   id: string;
@@ -199,12 +199,18 @@ export default function DashboardPage() {
             </div>
           </div>
           <div className="flex items-center space-x-3 lg:space-x-6">
-            <button
-              onClick={() => router.push('/v2/dashboard')}
-              className="px-4 py-2 bg-slate-900 text-white rounded-lg text-xs lg:text-sm font-medium hover:bg-slate-800 transition-all shadow-sm hover:shadow active:scale-95"
-            >
-              V2 UI
-            </button>
+            <div className="relative flex items-center group/v2">
+              <div className="absolute -left-28 top-1/2 -translate-y-1/2 hidden md:flex items-center pointer-events-none animate-pulse-horizontal">
+                <span className="bg-indigo-600 text-[9px] text-white px-2 py-1 rounded-md font-black uppercase tracking-widest shadow-lg mr-2 whitespace-nowrap">Try Premium UI</span>
+                <MousePointer2 className="w-4 h-4 text-indigo-600 rotate-90 fill-indigo-600" />
+              </div>
+              <button
+                onClick={() => router.push('/v2/dashboard')}
+                className="px-4 py-2 bg-indigo-600 text-white rounded-lg text-xs lg:text-sm font-black uppercase tracking-wider hover:bg-indigo-700 transition-all shadow-[0_0_15px_rgba(79,70,229,0.3)] hover:shadow-[0_0_20px_rgba(79,70,229,0.5)] active:scale-95"
+              >
+                V2 UI
+              </button>
+            </div>
             <button
               onClick={() => { logout(); router.push('/login'); }}
               className="flex items-center text-slate-500 hover:text-rose-600 font-medium text-xs lg:text-sm transition-colors group"
@@ -474,6 +480,14 @@ export default function DashboardPage() {
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        
+        @keyframes pulse-horizontal {
+          0%, 100% { transform: translate(-8px, -50%); opacity: 0.8; }
+          50% { transform: translate(0px, -50%); opacity: 1; }
+        }
+        .animate-pulse-horizontal {
+          animation: pulse-horizontal 1.5s ease-in-out infinite;
+        }
       `}</style>
     </div>
   );
