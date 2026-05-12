@@ -24,9 +24,8 @@ function getAllowedDevOrigins() {
 }
 
 const nextConfig: NextConfig = {
-  experimental: {
-    allowedDevOrigins: getAllowedDevOrigins(),
-  },
+  experimental: {},
+  allowedDevOrigins: getAllowedDevOrigins(),
   async rewrites() {
     return {
       beforeFiles: [
