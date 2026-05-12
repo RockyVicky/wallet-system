@@ -152,7 +152,7 @@ export default function V2HistoryPage() {
                        {tx.party.phone || '—'}
                     </td>
                     <td className={`py-5 px-6 lg:px-8 text-sm lg:text-base font-semibold text-right ${
-                      tx.type === 'CREDIT' ? 'text-emerald-600' : 'text-slate-900'
+                      tx.type === 'CREDIT' ? 'text-emerald-600' : 'text-rose-600'
                     }`}>
                       {tx.type === 'CREDIT' ? '+' : '-'}₹{Number(tx.amount).toLocaleString('en-IN', {minimumFractionDigits: 2})}
                     </td>

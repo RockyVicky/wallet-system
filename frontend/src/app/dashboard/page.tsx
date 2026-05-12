@@ -442,7 +442,7 @@ export default function DashboardPage() {
                         {tx.party.phone || '—'}
                       </td>
                       <td className={`py-5 px-6 text-right font-semibold ${
-                        tx.type === 'CREDIT' ? 'text-emerald-600' : 'text-slate-900'
+                        tx.type === 'CREDIT' ? 'text-emerald-600' : 'text-rose-600'
                       }`}>
                         {tx.type === 'CREDIT' ? '+' : '-'}₹{Number(tx.amount).toLocaleString('en-IN', {minimumFractionDigits: 2})}
                       </td>
