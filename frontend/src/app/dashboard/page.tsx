@@ -291,7 +291,7 @@ export default function DashboardPage() {
             </div>
 
             {/* Deposit Form */}
-            <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 hover:shadow-md transition-shadow duration-300">
+            <div className="bg-white rounded-2xl p-6 shadow-xl border border-slate-200 hover:shadow-2xl transition-shadow duration-300">
               <h2 className="text-lg font-semibold flex items-center mb-6 text-slate-900 tracking-tight">
                 <PlusCircle className="w-5 h-5 mr-3 text-emerald-500" /> Add Funds
               </h2>
@@ -316,7 +316,7 @@ export default function DashboardPage() {
             </div>
 
             {/* Send Form */}
-            <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 hover:shadow-md transition-shadow duration-300">
+            <div className="bg-white rounded-2xl p-6 shadow-xl border border-slate-200 hover:shadow-2xl transition-shadow duration-300">
               <h2 className="text-lg font-semibold flex items-center mb-6 text-slate-900 tracking-tight">
                 <Send className="w-5 h-5 mr-3 text-indigo-500" /> Transfer
               </h2>
@@ -391,7 +391,7 @@ export default function DashboardPage() {
           </div>
 
           {/* Right Column (History) */}
-          <div className="flex-1 bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col h-[600px] lg:h-full overflow-hidden shrink-0">
+          <div className="flex-1 bg-white rounded-2xl shadow-xl border border-slate-200 flex flex-col h-[600px] lg:h-full overflow-hidden shrink-0">
             <div className="flex-none p-6 lg:p-8 bg-white border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div className="flex items-center">
                 <div className="p-2 bg-slate-50 rounded-lg mr-4">

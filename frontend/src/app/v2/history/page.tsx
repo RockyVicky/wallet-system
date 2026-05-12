@@ -1,7 +1,8 @@
 "use client";
 import { useEffect, useState, useMemo } from 'react';
 import api from '@/lib/api';
-import { History, Search, ChevronDown, ChevronUp } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { History, Search, ChevronDown, ChevronUp, ArrowDownLeft, ArrowUpRight, Filter, Download } from 'lucide-react';
 
 interface Transaction {
   id: string;
@@ -16,12 +17,16 @@ interface Transaction {
   };
 }
 
+const tableRowVariants = {
+  initial: { opacity: 0, x: -10 },
+  animate: { opacity: 1, x: 0 },
+  exit: { opacity: 0, x: 10 }
+};
+
 export default function V2HistoryPage() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
   const [isMounted, setIsMounted] = useState(false);
-  
-  // Search & Sort
   const [searchQuery, setSearchQuery] = useState('');
   const [sortConfig, setSortConfig] = useState({ key: 'date', direction: 'desc' });
 
@@ -76,100 +81,144 @@ export default function V2HistoryPage() {
     }));
   };
 
-  if (loading) return <div className="text-slate-400 font-medium tracking-wide animate-pulse mt-10">Retrieving audit logs...</div>;
+  if (loading) return (
+    <div className="flex items-center justify-center h-full">
+       <div className="text-slate-900 font-black uppercase tracking-[0.3em] animate-pulse">Decrypting Ledger...</div>
+    </div>
+  );
 
   return (
-    <div className="h-full flex flex-col font-sans animate-in fade-in duration-500">
-      <div className="mb-8 flex-none flex flex-col md:flex-row md:items-end justify-between gap-6">
+    <div className="h-full flex flex-col font-sans">
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="mb-12 flex flex-col lg:flex-row lg:items-end justify-between gap-8"
+      >
         <div>
-          <h1 className="text-2xl lg:text-3xl font-semibold text-slate-900 tracking-tight mb-1">Audit Logs</h1>
-          <p className="text-slate-500 font-medium text-sm">Verified transaction history</p>
+          <h1 className="text-4xl lg:text-5xl font-black text-slate-950 tracking-tighter mb-2 uppercase italic">Audit Logs</h1>
+          <p className="text-slate-400 font-black text-[10px] uppercase tracking-[0.3em]">Verified immutable records • v2.4</p>
         </div>
-        <div className="relative w-full md:w-80 lg:w-96">
-           <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
-           <input 
-             type="text" 
-             placeholder="Filter the ledger..."
-             className="w-full pl-11 pr-4 py-3 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-900 outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all shadow-sm"
-             value={searchQuery}
-             onChange={(e) => setSearchQuery(e.target.value)}
-           />
-        </div>
-      </div>
-      
-      <div className="flex-1 bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col overflow-hidden">
-        <div className="p-6 bg-white border-b border-slate-100 flex items-center justify-between">
-          <div className="flex items-center">
-            <div className="p-2 bg-slate-50 rounded-lg mr-4 border border-slate-100">
-              <History className="w-5 h-5 text-slate-600" />
-            </div>
-            <h2 className="text-lg font-semibold text-slate-900 tracking-tight">Transaction Ledger</h2>
+        
+        <div className="flex flex-col md:flex-row items-center gap-4 w-full lg:w-auto">
+          <div className="relative w-full md:w-80">
+             <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
+             <input 
+               type="text" 
+               placeholder="SEARCH THE PROTOCOL..."
+               className="w-full pl-12 pr-6 py-4 bg-white border-2 border-slate-100 rounded-[1.25rem] text-[10px] font-black uppercase tracking-widest text-slate-900 outline-none focus:border-indigo-600 transition-all shadow-sm"
+               value={searchQuery}
+               onChange={(e) => setSearchQuery(e.target.value)}
+             />
           </div>
-          <span className="bg-slate-100 text-slate-600 text-xs font-semibold px-3 py-1 rounded-full">{processedTransactions.length} Items</span>
+          <button className="w-full md:w-auto px-6 py-4 bg-slate-950 text-white rounded-[1.25rem] text-[10px] font-black uppercase tracking-widest flex items-center justify-center hover:bg-slate-800 transition-all shadow-xl group">
+             <Download className="w-4 h-4 mr-3 group-hover:translate-y-0.5 transition-transform" /> Export CSV
+          </button>
+        </div>
+      </motion.div>
+      
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.98 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ delay: 0.2 }}
+        className="flex-1 glass rounded-[3rem] border border-white/40 flex flex-col overflow-hidden shadow-2xl"
+      >
+        <div className="p-8 lg:p-10 border-b border-slate-100 flex items-center justify-between bg-white/50 backdrop-blur-md">
+          <div className="flex items-center space-x-4">
+            <div className="w-12 h-12 bg-slate-950 rounded-2xl flex items-center justify-center shadow-xl">
+              <History className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <h2 className="text-lg font-black uppercase tracking-tighter text-slate-950">Transaction Ledger</h2>
+              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Real-time verification active</p>
+            </div>
+          </div>
+          <div className="flex items-center space-x-3">
+             <div className="px-4 py-2 bg-indigo-50 text-indigo-700 text-[10px] font-black uppercase tracking-widest rounded-full border border-indigo-100">
+               {processedTransactions.length} ENTRIES
+             </div>
+          </div>
         </div>
         
         <div className="flex-1 overflow-y-auto custom-scrollbar">
-          <table className="w-full text-left table-fixed">
-            <thead className="bg-slate-50/50 sticky top-0 z-10 border-b border-slate-200 backdrop-blur-sm">
-              <tr className="text-slate-500 text-xs font-semibold uppercase tracking-wider">
-                <th className="py-4 px-6 lg:px-8 w-[25%] lg:w-[20%] cursor-pointer hover:text-slate-800 transition-colors" onClick={() => handleSort('date')}>
-                  <div className="flex items-center">Date {sortConfig.key === 'date' && (sortConfig.direction === 'desc' ? <ChevronDown className="w-3 h-3 ml-1" /> : <ChevronUp className="w-3 h-3 ml-1" />)}</div>
+          <table className="w-full text-left">
+            <thead className="bg-slate-50/80 sticky top-0 z-20 border-b border-slate-100 backdrop-blur-xl">
+              <tr className="text-slate-400 text-[10px] font-black uppercase tracking-[0.2em]">
+                <th className="py-6 px-10 w-[20%] cursor-pointer hover:text-indigo-600 transition-colors" onClick={() => handleSort('date')}>
+                  <div className="flex items-center">TIMESTAMP {sortConfig.key === 'date' && (sortConfig.direction === 'desc' ? <ChevronDown className="w-3 h-3 ml-1" /> : <ChevronUp className="w-3 h-3 ml-1" />)}</div>
                 </th>
-                <th className="py-4 px-6 lg:px-8 w-[30%] lg:w-[38%]">Counterparty Identity</th>
-                <th className="py-4 px-6 lg:px-8 w-[20%] lg:w-[16%]">Phone</th>
-                <th className="py-4 px-6 lg:px-8 w-[15%] lg:w-[16%] text-right cursor-pointer hover:text-slate-800 transition-colors" onClick={() => handleSort('amount')}>
-                  <div className="flex items-center justify-end">Amount {sortConfig.key === 'amount' && (sortConfig.direction === 'desc' ? <ChevronDown className="w-3 h-3 ml-1" /> : <ChevronUp className="w-3 h-3 ml-1" />)}</div>
+                <th className="py-6 px-10 w-[40%]">COUNTERPARTY ENTITY</th>
+                <th className="py-6 px-10 w-[20%] text-right cursor-pointer hover:text-indigo-600 transition-colors" onClick={() => handleSort('amount')}>
+                  <div className="flex items-center justify-end">AMOUNT {sortConfig.key === 'amount' && (sortConfig.direction === 'desc' ? <ChevronDown className="w-3 h-3 ml-1" /> : <ChevronUp className="w-3 h-3 ml-1" />)}</div>
                 </th>
-                <th className="py-4 px-6 lg:px-8 w-[10%] text-center">Status</th>
+                <th className="py-6 px-10 w-[20%] text-center">PROTOCOL STATE</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
-              {processedTransactions.length === 0 ? (
-                <tr><td colSpan={5} className="py-20 text-center text-slate-400 font-medium text-sm">No Records Matching Filter</td></tr>
-              ) : (
-                processedTransactions.map((tx: any) => (
-                  <tr key={tx.id} className="hover:bg-slate-50/80 transition-colors group">
-                    <td className="py-5 px-6 lg:px-8">
-                      {isMounted ? (
-                        <div className="flex flex-col">
-                           <span className="text-sm font-medium text-slate-900">{new Date(tx.date).toLocaleDateString('en-IN', {day:'2-digit', month:'short', year:'numeric'})}</span>
-                           <span className="text-xs text-slate-500 mt-0.5">{new Date(tx.date).toLocaleTimeString('en-IN', {hour:'2-digit', minute:'2-digit'})}</span>
-                        </div>
-                      ) : <div className="h-8 w-24 bg-slate-100 animate-pulse rounded"></div>}
-                    </td>
-                    <td className="py-5 px-6 lg:px-8">
-                       <div className="flex items-center">
-                          <div className="w-8 h-8 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center mr-3 text-slate-600 font-semibold text-xs shrink-0">
-                            {tx.party.name.charAt(0).toUpperCase()}
+            <tbody className="divide-y divide-slate-50">
+              <AnimatePresence mode="popLayout">
+                {processedTransactions.length === 0 ? (
+                  <motion.tr variants={tableRowVariants} initial="initial" animate="animate">
+                    <td colSpan={4} className="py-32 text-center text-slate-400 font-black text-xs uppercase tracking-widest">Zero Matching Records Found</td>
+                  </motion.tr>
+                ) : (
+                  processedTransactions.map((tx: any, index: number) => (
+                    <motion.tr 
+                      key={tx.id} 
+                      variants={tableRowVariants}
+                      initial="initial"
+                      animate="animate"
+                      transition={{ delay: index * 0.02 }}
+                      className="group hover:bg-slate-50/50 transition-all cursor-default"
+                    >
+                      <td className="py-8 px-10">
+                        {isMounted ? (
+                          <div className="flex flex-col">
+                             <span className="text-xs font-black text-slate-900 uppercase tracking-tight">{new Date(tx.date).toLocaleDateString('en-IN', {day:'2-digit', month:'short', year:'numeric'})}</span>
+                             <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1.5">{new Date(tx.date).toLocaleTimeString('en-IN', {hour:'2-digit', minute:'2-digit'})}</span>
                           </div>
-                          <div className="flex flex-col min-w-0">
-                             <span className="text-sm font-semibold text-slate-900 truncate">{tx.party.name}</span>
-                             <span className="text-xs text-slate-500 truncate">{tx.party.email}</span>
-                          </div>
-                       </div>
-                    </td>
-                    <td className="py-5 px-6 lg:px-8 text-sm text-slate-600">
-                       {tx.party.phone || '—'}
-                    </td>
-                    <td className={`py-5 px-6 lg:px-8 text-sm lg:text-base font-semibold text-right ${
-                      tx.type === 'CREDIT' ? 'text-emerald-600' : 'text-rose-600'
-                    }`}>
-                      {tx.type === 'CREDIT' ? '+' : '-'}₹{Number(tx.amount).toLocaleString('en-IN', {minimumFractionDigits: 2})}
-                    </td>
-                    <td className="py-5 px-6 lg:px-8 text-center">
-                      <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${
-                        tx.status === 'COMPLETED' ? 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-600/20' : 'bg-amber-50 text-amber-700 ring-1 ring-amber-600/20'
+                        ) : <div className="h-10 w-24 bg-slate-50 rounded-lg animate-pulse" />}
+                      </td>
+                      <td className="py-8 px-10">
+                         <div className="flex items-center">
+                            <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mr-5 text-lg font-black uppercase shadow-sm border transition-all group-hover:scale-110 ${
+                              tx.type === 'CREDIT' ? 'bg-emerald-50 border-emerald-100 text-emerald-600' : 'bg-rose-50 border-rose-100 text-rose-600'
+                            }`}>
+                              {tx.party.name.charAt(0)}
+                            </div>
+                            <div className="flex flex-col min-w-0">
+                               <span className="text-sm font-black text-slate-950 uppercase tracking-tight truncate">{tx.party.name}</span>
+                               <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1.5 truncate">{tx.party.email}</span>
+                            </div>
+                         </div>
+                      </td>
+                      <td className={`py-8 px-10 text-right text-lg font-black tracking-tighter ${
+                        tx.type === 'CREDIT' ? 'text-emerald-600' : 'text-rose-600'
                       }`}>
-                        {tx.status}
-                      </span>
-                    </td>
-                  </tr>
-                ))
-              )}
+                        <div className="flex items-center justify-end space-x-2">
+                          <span>{tx.type === 'CREDIT' ? '+' : '-'}</span>
+                          <span>₹{Number(tx.amount).toLocaleString('en-IN', {minimumFractionDigits: 2})}</span>
+                        </div>
+                      </td>
+                      <td className="py-8 px-10">
+                        <div className="flex items-center justify-center">
+                          <span className={`inline-flex items-center px-4 py-2 rounded-2xl text-[9px] font-black uppercase tracking-[0.15em] border ${
+                            tx.status === 'COMPLETED' 
+                            ? 'bg-emerald-50 text-emerald-700 border-emerald-100' 
+                            : 'bg-amber-50 text-amber-700 border-amber-100'
+                          }`}>
+                            <div className={`w-1.5 h-1.5 rounded-full mr-2.5 ${tx.status === 'COMPLETED' ? 'bg-emerald-600' : 'bg-amber-600 animate-pulse'}`} />
+                            {tx.status}
+                          </span>
+                        </div>
+                      </td>
+                    </motion.tr>
+                  ))
+                )}
+              </AnimatePresence>
             </tbody>
           </table>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }
+

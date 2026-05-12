@@ -1,5 +1,5 @@
 "use client";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import axios from 'axios';
@@ -12,8 +12,14 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { login } = useAuth();
+  const { login, user, loading } = useAuth();
   const router = useRouter();
+
+  useEffect(() => {
+    if (!loading && user) {
+      router.push('/v2/dashboard');
+    }
+  }, [user, loading, router]);
 
   const togglePassword = () => {
     setShowPassword((current) => !current);
@@ -27,7 +33,7 @@ export default function LoginPage() {
     try {
       const res = await api.post('/auth/login', formData);
       login(res.data.access_token, res.data.user);
-      router.push('/dashboard');
+      router.push('/v2/dashboard');
     } catch (err: unknown) {
       console.error('Login Error:', err);
 
