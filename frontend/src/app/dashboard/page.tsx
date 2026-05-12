@@ -5,6 +5,19 @@ import { useAuth } from '@/lib/AuthContext';
 import api from '@/lib/api';
 import { LogOut, Wallet, Send, PlusCircle, History, X, Search, User, Check, Edit3 } from 'lucide-react';
 
+interface Transaction {
+  id: string;
+  date: string;
+  amount: number | string;
+  status: string;
+  type: 'CREDIT' | 'DEBIT';
+  party: {
+    name: string;
+    email: string;
+    phone?: string;
+  };
+}
+
 export default function DashboardPage() {
   const { user, logout, updateUser, loading } = useAuth();
   const router = useRouter();
@@ -12,7 +25,7 @@ export default function DashboardPage() {
   const [amountToAdd, setAmountToAdd] = useState('');
   const [transferEmail, setTransferEmail] = useState('');
   const [transferAmount, setTransferAmount] = useState('');
-  const [transactions, setTransactions] = useState([]);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [users, setUsers] = useState<any[]>([]);
   const [filteredDropdownUsers, setFilteredDropdownUsers] = useState<any[]>([]);
   const [showDropdown, setShowDropdown] = useState(false);
@@ -98,9 +111,9 @@ export default function DashboardPage() {
         tx.amount.toString().includes(q)
       );
     }
-    result.sort((a, b) => {
-      let valA = a[sortConfig.key];
-      let valB = b[sortConfig.key];
+    result.sort((a: any, b: any) => {
+      let valA = a[sortConfig.key as keyof Transaction] as any;
+      let valB = b[sortConfig.key as keyof Transaction] as any;
       if (sortConfig.key === 'date') {
         valA = new Date(valA).getTime();
         valB = new Date(valB).getTime();

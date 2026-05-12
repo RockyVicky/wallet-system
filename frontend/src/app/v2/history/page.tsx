@@ -3,8 +3,21 @@ import { useEffect, useState, useMemo } from 'react';
 import api from '@/lib/api';
 import { History, Search, ChevronDown, ChevronUp } from 'lucide-react';
 
+interface Transaction {
+  id: string;
+  date: string;
+  amount: number | string;
+  status: string;
+  type: 'CREDIT' | 'DEBIT';
+  party: {
+    name: string;
+    email: string;
+    phone?: string;
+  };
+}
+
 export default function V2HistoryPage() {
-  const [transactions, setTransactions] = useState([]);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
   const [isMounted, setIsMounted] = useState(false);
   
@@ -39,9 +52,9 @@ export default function V2HistoryPage() {
         tx.amount.toString().includes(q)
       );
     }
-    result.sort((a, b) => {
-      let vA = a[sortConfig.key];
-      let vB = b[sortConfig.key];
+    result.sort((a: any, b: any) => {
+      let vA = a[sortConfig.key as keyof Transaction] as any;
+      let vB = b[sortConfig.key as keyof Transaction] as any;
       if (sortConfig.key === 'date') {
         vA = new Date(vA).getTime();
         vB = new Date(vB).getTime();
