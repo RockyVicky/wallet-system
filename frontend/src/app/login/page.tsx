@@ -21,6 +21,13 @@ export default function LoginPage() {
     }
   }, [user, loading, router]);
 
+  // Trick: Send a wakeup ping to the backend as soon as the login page loads
+  useEffect(() => {
+    api.get('/health').catch(() => {
+      // Ignore errors, we just want to trigger the server wake-up
+    });
+  }, []);
+
   const togglePassword = () => {
     setShowPassword((current) => !current);
   };

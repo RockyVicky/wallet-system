@@ -14,7 +14,7 @@ const backendInternalUrl =
  */
 const api = axios.create({
   baseURL: typeof window !== 'undefined' ? '/api-backend' : backendInternalUrl,
-  timeout: 10000, // 10s timeout
+  timeout: 60000, // Increased to 60s to handle Render.com free tier cold starts
 });
 
 api.interceptors.request.use(
